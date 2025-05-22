@@ -8,12 +8,12 @@ on:
 permissions:
   contents: write
 
-env:
-  RELEASE_TAG: channel-latest
-
 jobs:
   build-and-publish:
     runs-on: ubuntu-latest
+    env:
+      RELEASE_TAG: channel-latest
+      GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -42,8 +42,7 @@ jobs:
         id: download
         continue-on-error: true
         run: |
-          curl -s -L -o existing-channel.json https://github.com/${{ github.repository }}/releases/download/${{ env.RELEASE_TAG }}/channel.json || echo "First run or download failed"
-          if [ -f "existing-channel.json" ]; then
+          if gh release download ${{ env.RELEASE_TAG }} --pattern "channel.json" --output existing-channel.json; then
             EXISTING_HASH=$(sha256sum existing-channel.json | cut -d ' ' -f 1)
             echo "existing_hash=$EXISTING_HASH" >> $GITHUB_OUTPUT
             echo "Existing channel.json hash: $EXISTING_HASH"
@@ -66,8 +65,6 @@ jobs:
 
       - name: Update release and upload asset if needed
         if: steps.check.outputs.update_needed == 'true'
-        env:
-          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
           # Create or update the release
           gh release view ${{ env.RELEASE_TAG }} || \
