@@ -73,11 +73,21 @@ jobs:
           gh release view ${{ env.RELEASE_TAG }} || \
           gh release create ${{ env.RELEASE_TAG }} \
             --title "Channel Asset" \
-            --notes "Latest channel.json"
+            --notes "channel.json"
+
+          # Format release notes
+          HASH=${{ steps.generate.outputs.new_hash }}
+          DATE=$(date +"%B %d, %Y, %H:%M")
+
+          echo "channel.json" > notes.txt
+          echo "sha256: $HASH" >> notes.txt
+          echo "date: $DATE" >> notes.txt
 
           echo "Uploading channel.json file..."
-          gh release upload ${{ env.RELEASE_TAG }} channel.json \
-            --clobber
+          gh release upload ${{ env.RELEASE_TAG }} channel.json --clobber
+
+          echo "Updating release notes..."
+          gh release edit ${{ env.RELEASE_TAG }} --notes-file notes.txt
 
       - name: Output result
         run: |
