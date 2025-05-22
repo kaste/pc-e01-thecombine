@@ -86,3 +86,12 @@ jobs:
           else
             echo "ℹ️ No changes detected in channel.json, skipped update"
           fi
+
+      - name: Show diff (if update and not first run)
+        if: steps.check.outputs.update_needed == 'true' && steps.download.outputs.existing_hash != 'none'
+        run: |
+          echo "📄 Showing diff between existing-channel.json and channel.json"
+
+          python -m json.tool existing-channel.json > old.json
+          python -m json.tool channel.json > new.json
+          diff -u old.json new.json || true

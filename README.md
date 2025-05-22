@@ -19,3 +19,9 @@ https://github.com/kaste/pc-e01-thecombine/releases/download/channel-latest/chan
 ```
 
 See public PR https://github.com/wbond/package_control/pull/1698
+
+
+```bash
+$ uv run scripts/generate_channel.py && sha256sum channel.json
+fdb31ca8eafde0df47aeb059fbdb20095b03b0f1ba1ee74f8988eed34d6ac6d1 *channel.json
+```
