@@ -74,7 +74,7 @@ jobs:
 
           # Format release notes
           HASH=${{ steps.generate.outputs.new_hash }}
-          DATE=$(date +"%B %d, %Y, %H:%M")
+          DATE=$(TZ=Europe/Berlin date +"%B %d, %Y, %H:%M GMT%:::z" | sed -E 's/([+-])0/\1/')
 
           echo "channel.json" > notes.txt
           echo "sha256: $HASH" >> notes.txt
