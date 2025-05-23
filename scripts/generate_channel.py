@@ -55,7 +55,11 @@ def http_get_json(location: str) -> dict:
 def http_get(location: str) -> str:
     req = urllib.request.Request(
         location,
-        headers={'User-Agent': 'Mozilla/5.0'}
+        headers={
+            'User-Agent': 'Mozilla/5.0',
+            'Cache-Control': 'no-cache',
+            'Pragma': 'no-cache'
+        }
     )
     with urllib.request.urlopen(req) as response:
         return response.read().decode('utf-8')
