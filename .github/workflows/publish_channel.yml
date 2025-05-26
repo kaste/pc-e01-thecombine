@@ -84,11 +84,10 @@ jobs:
           EXISTING_NOTES=$(gh release view ${{ env.RELEASE_TAG }} --json body -q '.body')
 
           # Extract previous entries (excluding current)
-          PREVIOUS=$(echo "$EXISTING_NOTES" | awk '
-            BEGIN { RS=""; ORS="\n\n" }
-            /^channel\.json -- \*\*current\*\*/ { next }
-            /^_previous versions_:/,0 { print }
-          ' | grep -A2 '^sha256:' || true)
+          PREVIOUS=$(
+            echo "$EXISTING_NOTES" |
+              sed '/^channel\.json -- \*\*current\*\*/d; /^_previous versions_:/d'
+          )
 
           # Build new notes
           {
