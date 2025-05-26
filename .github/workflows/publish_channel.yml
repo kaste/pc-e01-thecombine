@@ -75,30 +75,30 @@ jobs:
           # Format release notes
           HASH=${{ steps.generate.outputs.new_hash }}
           DATE=$(TZ=Europe/Berlin date +"%B %d, %Y, %H:%M GMT%:::z" | sed -E 's/([+-])0/\1/')
+          REPO_URL="https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}"
 
-          # Fetch current release notes
+          # Fetch existing release notes
           EXISTING_NOTES=$(gh release view ${{ env.RELEASE_TAG }} --json body -q '.body')
 
-          # Parse previous entries from notes (excluding current)
-          # Each entry is: sha256: <hash>\ndate: <text>
+          # Extract previous entries (excluding current)
           PREVIOUS=$(echo "$EXISTING_NOTES" | awk '
             BEGIN { RS=""; ORS="\n\n" }
             /^channel\.json -- \*\*current\*\*/ { next }
             /^was:/,0 { print }
-          ' | grep -A1 '^sha256:' || true)
+          ' | grep -A2 '^sha256:' || true)
 
           # Build new notes
           {
             echo "channel.json -- **current**"
             echo "sha256: $HASH"
             echo "date: $DATE"
+            echo "([logs]($REPO_URL))"
             echo ""
             echo "was:"
 
             # Print prior hashes/dates up to 4 (so total stays at 5)
             echo "$PREVIOUS" | awk 'BEGIN{ RS=""; ORS="\n\n" } { print }' | head -n 4
           } > notes.txt
-
 
           echo "Uploading channel.json file..."
           gh release upload ${{ env.RELEASE_TAG }} channel.json --clobber
