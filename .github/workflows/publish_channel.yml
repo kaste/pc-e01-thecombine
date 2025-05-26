@@ -84,7 +84,7 @@ jobs:
           PREVIOUS=$(echo "$EXISTING_NOTES" | awk '
             BEGIN { RS=""; ORS="\n\n" }
             /^channel\.json -- \*\*current\*\*/ { next }
-            /^was:/,0 { print }
+            /^_previous versions_:/,0 { print }
           ' | grep -A2 '^sha256:' || true)
 
           # Build new notes
@@ -94,7 +94,7 @@ jobs:
             echo "date: $DATE"
             echo "([logs]($REPO_URL))"
             echo ""
-            echo "was:"
+            echo "_previous versions_:"
 
             # Print prior hashes/dates up to 4 (so total stays at 5)
             echo "$PREVIOUS" | awk 'BEGIN{ RS=""; ORS="\n\n" } { print }' | head -n 4
