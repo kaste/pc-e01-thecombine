@@ -93,12 +93,17 @@ jobs:
             echo "sha256: $HASH"
             echo "date: $DATE"
             echo "([logs]($REPO_URL))"
-            echo ""
-            echo "_previous versions_:"
-
-            # Print prior hashes/dates up to 4 (so total stays at 5)
-            echo "$PREVIOUS" | awk 'BEGIN{ RS=""; ORS="\n\n" } { print }' | head -n 4
           } > notes.txt
+
+          if [ "$PREVIOUS" ]; then
+            {
+              echo ""
+              echo "_previous versions_:"
+
+              # Print prior hashes/dates up to 4 (so total stays at 5)
+              echo "$PREVIOUS" | awk 'BEGIN{ RS=""; ORS="\n\n" } { print }' | head -n 4
+            } >> notes.txt
+          fi
 
           echo "Uploading channel.json file..."
           gh release upload ${{ env.RELEASE_TAG }} channel.json --clobber
