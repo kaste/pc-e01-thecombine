@@ -72,6 +72,9 @@ jobs:
             --title "Channel Asset" \
             --notes "channel.json"
 
+          echo "Uploading channel.json file..."
+          gh release upload ${{ env.RELEASE_TAG }} channel.json --clobber
+
           # Format release notes
           HASH=${{ steps.generate.outputs.new_hash }}
           DATE=$(TZ=Europe/Berlin date +"%B %d, %Y, %H:%M GMT%:::z" | sed -E 's/([+-])0/\1/')
@@ -104,9 +107,6 @@ jobs:
               echo "$PREVIOUS" | awk 'BEGIN{ RS=""; ORS="\n\n" } { print }' | head -n 4
             } >> notes.txt
           fi
-
-          echo "Uploading channel.json file..."
-          gh release upload ${{ env.RELEASE_TAG }} channel.json --clobber
 
           echo "Updating release notes..."
           gh release edit ${{ env.RELEASE_TAG }} --notes-file notes.txt
