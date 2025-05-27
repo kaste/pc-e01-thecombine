@@ -103,7 +103,7 @@ jobs:
               echo "_previous versions_:"
 
               # Print prior hashes/dates up to 4 (so total stays at 5)
-              echo "$PREVIOUS" | awk 'BEGIN{ RS=""; ORS="\n\n" } { print }' | head -n 4
+              echo "$PREVIOUS" | awk 'BEGIN{ RS=""; ORS="\n\n" } { print; count++ } count == 4 { exit }'
             } >> notes.txt
           fi
 
